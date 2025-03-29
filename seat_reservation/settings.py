@@ -85,9 +85,9 @@ WSGI_APPLICATION = 'seat_reservation.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'seat-reservation',
+        'NAME': 'seat_reservation',
         'USER': 'root',
-        'PASSWORD': os.getenv('MYSQL_PASSWORD'),
+        'PASSWORD': 'root',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
