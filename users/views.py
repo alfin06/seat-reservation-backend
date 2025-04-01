@@ -9,8 +9,14 @@ from django.contrib.auth import login
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
-from .serializers import LoginSerializer, RegistrationSerializer, UserSerializer
-from .models import User
+from .serializers import (
+    LoginSerializer, 
+    RegistrationSerializer, 
+    UserSerializer, 
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer
+)
+from .models import User, PasswordResetToken
 
 # Existing view
 def all_user(request):
@@ -69,3 +75,44 @@ class RegistrationView(APIView):
         # In a real implementation, you would use a proper token generation method
         # This is just a simple example
         return f"{user.id}-{user.email}-{timezone.now().timestamp()}"
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = User.objects.get(email=email)
+            
+            # Create password reset token
+            token_obj = PasswordResetToken.objects.create(user=user)
+            
+            # Create reset URL
+            reset_url = f"{settings.FRONTEND_URL}/reset-password/{token_obj.token}"
+            
+            # Send password reset email
+            send_mail(
+                'Reset Your Password',
+                f'Click the following link to reset your password. This link is valid for 24 hours: {reset_url}',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            return Response({
+                "message": "Password reset email has been sent. Please check your inbox."
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({
+                "message": "Password has been reset successfully. You can now log in with your new password."
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
