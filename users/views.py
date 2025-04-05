@@ -3,14 +3,14 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework import status, viewsets, permissions
+from rest_framework.permissions import AllowAny, IsAdminUser
 from django.contrib.auth import login
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
-from .serializers import LoginSerializer, RegistrationSerializer, UserSerializer
-from .models import User
+from .serializers import LoginSerializer, RegistrationSerializer, UserSerializer, SeatSerializer, ReservationSerializer
+from .models import User, Seat, Reservation, ClassRoom
 
 # Existing view
 def all_user(request):
@@ -69,3 +69,21 @@ class RegistrationView(APIView):
         # In a real implementation, you would use a proper token generation method
         # This is just a simple example
         return f"{user.id}-{user.email}-{timezone.now().timestamp()}"
+    
+class AdminDashboardStatusView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, format=None):
+        empty_seats_count = Seat.objects.filter(is_available=False).count()
+        available_seats_count = Seat.objects.filter(is_available=True).count()
+        empty_classroom_count = ClassRoom.objects.filter(is_available=False).count()
+        available_classroom_count = ClassRoom.objects.filter(is_available=True).count()
+
+        data = {
+            "empty_seats_count": empty_seats_count,
+            "available_seats_count": available_seats_count,
+            "empty_classroom_count": empty_classroom_count,
+            "available_classroom_count": available_classroom_count,
+        }
+
+        return Response(data)

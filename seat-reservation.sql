@@ -35,6 +35,20 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `users_seat`(
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `location` varchar(100) NOT NULL,
+  `is_available` TINYINT(1) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `users_classroom`(
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `location` varchar(100) NOT NULL,
+  `is_available` TINYINT(1) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Dumping data for table seat-reservation.users: ~0 rows (approximately)
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

@@ -6,11 +6,11 @@ def test_registration():
     
     # Test data
     data = {
-        'email': 'test2@example.com',
-        'password': 'testpass123',
-        'confirm_password': 'testpass123',
-        'name': 'Test User 2',
-        'role': 'STUDENT'
+        'email': 'admin@admin.com',
+        'password': 'admin123',
+        'confirm_password': 'admin123',
+        'name': 'admin',
+        'role': 'ADMIN'
     }
     
     # Headers for JSON request

@@ -48,3 +48,32 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+    
+class Seat(models.Model):
+    AVAILABILITY_CHOICES = (
+        (0, 'Reserved'),
+        (1, 'Available'),
+    )
+    id = models.AutoField(primary_key=True)
+    location = models.CharField(max_length=100)
+    is_available = models.SmallIntegerField(choices=AVAILABILITY_CHOICES, default=1)        
+    # created_at = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"Seat {self.number} - {'Available' if self.is_available else 'Reserved'}"
+
+class ClassRoom(models.Model):
+    AVAILABILITY_CHOICES = (
+        (0, 'Reserved'),
+        (1, 'Available'),
+    )
+    id = models.AutoField(primary_key=True)
+    location = models.CharField(max_length=100)
+    is_available = models.SmallIntegerField(choices=AVAILABILITY_CHOICES, default=1)  
+
+class Reservation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)
+    reservation_time = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, default='active')

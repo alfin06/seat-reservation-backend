@@ -12,11 +12,11 @@ def test_welcome_page():
 def test_user_registration():
     url = f'{BASE_URL}/users/register/'
     data = {
-        'email': 'test@example.com',
-        'password': 'testpass123',
-        'confirm_password': 'testpass123',
+        'email': 'admin@example.com',
+        'password': 'admin123',
+        'confirm_password': 'admin123',
         'name': 'Test User',
-        'role': 'STUDENT'
+        'role': 'ADMIN'
     }
     headers = {'Content-Type': 'application/json'}
     
